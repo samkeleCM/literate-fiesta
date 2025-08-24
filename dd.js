@@ -39,24 +39,3 @@ app.get('/async-crash', (req, res) => {
     };
 
     // We intentionally do not 'await' or add a '.catch()' here.
-    someAsyncFunction();
-
-    res.send('Triggered an unhandled promise rejection. The server may not crash immediately, but DevGuardian caught it.');
-});
-
-// Endpoint to test a Handled Exception (manually reporting a non-fatal error)
-app.get('/handled-error', (req, res) => {
-    console.log('Received request for /handled-error. This will be caught and reported manually.');
-    try {
-        // Simulate a function that might fail, e.g., parsing invalid JSON
-        JSON.parse("{ 'invalid-json': }");
-    } catch (err) {
-
-});
-
-
-// --- 4. START THE SERVER ---
-app.listen(PORT, () => {
-    console.log(`🚀 Example App is running on http://localhost:${PORT}`);
-    console.log('Trigger errors by visiting the /crash, /async-crash, or /handled-error endpoints.');
-});
