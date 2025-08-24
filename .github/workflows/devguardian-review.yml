@@ -27,7 +27,7 @@ jobs:
           AI_RESPONSE=$(curl -s -X POST --data-binary "@pr.diff" ${{ secrets.DEVGUARDIAN_REVIEW_URL }})
           
           # Use the official multi-line syntax to set an ENVIRONMENT variable
-          echo 'REVIEW_COMMENT<<EOF' >> $GITHUB_ENV
+          echo 'AI_JSON_RESPONSE<<EOF' >> $GITHUB_ENV
           echo "$AI_RESPONSE" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
       - name: Submit AI Review to Pull Request
