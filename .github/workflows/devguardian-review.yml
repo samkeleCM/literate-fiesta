@@ -22,21 +22,20 @@ jobs:
           git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > pr.diff
           echo "✅ Diff saved to pr.diff"
       - name: Send Diff to DevGuardian for Review
-        id: ai_review
         run: |
           echo "🤖 Sending diff to DevGuardian AI for review..."
           AI_RESPONSE=$(curl -s -X POST --data-binary "@pr.diff" ${{ secrets.DEVGUARDIAN_REVIEW_URL }})
           
-          # Use the official multi-line output syntax
-          echo 'review_comment<<EOF' >> $GITHUB_OUTPUT
-          echo "$AI_RESPONSE" >> $GITHUB_OUTPUT
-          echo 'EOF' >> $GITHUB_OUTPUT
+          # Use the official multi-line syntax to set an ENVIRONMENT variable
+          echo 'REVIEW_COMMENT<<EOF' >> $GITHUB_ENV
+          echo "$AI_RESPONSE" >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
       - name: Post Review Comment
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const review = `${{ steps.ai_review.outputs.review_comment }}`;
+            const review = process.env.REVIEW_COMMENT;
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
