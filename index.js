@@ -54,19 +54,3 @@ app.get('/handled-error', (req, res) => {
         console.log('Caught an error, but the app is safe. Manually reporting to DevGuardian.');
         
         // Use the exported captureException function for handled errors
-        DevGuardian.captureException(err, {
-            userId: 'user-456',
-            requestPath: '/handled-error',
-            message: 'Failed to parse user-provided configuration.'
-        });
-
-        res.status(500).send('We caught the error and reported it. The server is still running!');
-    }
-});
-
-
-// --- 4. START THE SERVER ---
-app.listen(PORT, () => {
-    console.log(`🚀 Example App is running on http://localhost:${PORT}`);
-    console.log('Trigger errors by visiting the /crash, /async-crash, or /handled-error endpoints.');
-});
