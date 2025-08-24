@@ -51,13 +51,11 @@ jobs:
             }
 
             // Map our decision to the GitHub API's 'event' types.
-            let eventType;
-            if (decision === 'APPROVE') {
-              eventType = 'APPROVE';
-            } else if (decision === 'REQUEST_CHANGES') {
+             let eventType;
+            if (decision === 'REQUEST_CHANGES') {
               eventType = 'REQUEST_CHANGES';
             } else {
-              eventType = 'COMMENT'; // Fallback
+              eventType = 'COMMENT';
             }
 
             console.log(`Submitting review with decision: ${eventType}`);
