@@ -51,17 +51,7 @@ app.get('/handled-error', (req, res) => {
         // Simulate a function that might fail, e.g., parsing invalid JSON
         JSON.parse("{ 'invalid-json': }");
     } catch (err) {
-        console.log('Caught an error, but the app is safe. Manually reporting to DevGuardian.');
 
-        // Use the exported captureException function for handled errors
-        DevGuardian.captureException(err, {
-            userId: 'user-456',
-            requestPath: '/handled-error',
-            message: 'Failed to parse user-provided configuration.'
-        });
-
-        res.status(500).send('We caught the error and reported it. The server is still running!');
-    }
 });
 
 
