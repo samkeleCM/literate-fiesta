@@ -26,7 +26,11 @@ jobs:
         run: |
           echo "🤖 Sending diff to DevGuardian AI for review..."
           AI_RESPONSE=$(curl -s -X POST --data-binary "@pr.diff" ${{ secrets.DEVGUARDIAN_REVIEW_URL }})
-          echo "review_comment=$AI_RESPONSE" >> $GITHUB_OUTPUT
+          
+          # Use the official multi-line output syntax
+          echo 'review_comment<<EOF' >> $GITHUB_OUTPUT
+          echo "$AI_RESPONSE" >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
       - name: Post Review Comment
         uses: actions/github-script@v6
         with:
