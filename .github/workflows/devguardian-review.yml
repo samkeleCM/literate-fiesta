@@ -30,16 +30,45 @@ jobs:
           echo 'REVIEW_COMMENT<<EOF' >> $GITHUB_ENV
           echo "$AI_RESPONSE" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
-      - name: Post Review Comment
+      - name: Submit AI Review to Pull Request
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const review = process.env.REVIEW_COMMENT;
-            github.rest.issues.createComment({
+            // Safely read the JSON string from the environment.
+            const aiJsonResponse = process.env.AI_JSON_RESPONSE;
+            
+            // Parse the JSON to get the decision and comment.
+            let decision, comment;
+            try {
+              const aiData = JSON.parse(aiJsonResponse);
+              decision = aiData.decision;
+              comment = aiData.comment;
+            } catch (e) {
+              console.error("Failed to parse AI response:", e);
+              decision = 'COMMENT'; // Default to a simple comment on failure
+              comment = `The AI analysis returned an invalid format.\n\nRaw response:\n\`\`\`\n${aiJsonResponse}\n\`\`\``;
+            }
+
+            // Map our decision to the GitHub API's 'event' types.
+            let eventType;
+            if (decision === 'APPROVE') {
+              eventType = 'APPROVE';
+            } else if (decision === 'REQUEST_CHANGES') {
+              eventType = 'REQUEST_CHANGES';
+            } else {
+              eventType = 'COMMENT'; // Fallback
+            }
+
+            console.log(`Submitting review with decision: ${eventType}`);
+
+            // Use the GitHub API to create a formal "Pull Request Review".
+            await github.rest.pulls.createReview({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `### 🤖 DevGuardian AI Review\n\n${review}`
+              pull_number: context.issue.number,
+              event: eventType, // This is the crucial part: APPROVE, REQUEST_CHANGES, or COMMENT
+              body: `### 🤖 DevGuardian AI Review\n\n${comment}`
             });
-            console.log("✅ AI review comment posted successfully.");
+            
+            console.log("✅ AI review submitted successfully.");
