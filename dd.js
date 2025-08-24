@@ -6,7 +6,7 @@ const DevGuardian = require('@devguardian/sdk-node');
 
 DevGuardian.init(
     apiKey= 'my_api_keuy',
-    uploadUrl= 'https://c53puq7hy7.execute-api.af-south-1.amazonaws.com/prod/uploadLogs'
+    uploadUrl= ''
 );
 
 // --- 2. SETUP A BASIC EXPRESS SERVER ---
